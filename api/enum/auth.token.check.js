@@ -1,0 +1,1 @@
+export default '/vona2/token/check/';
