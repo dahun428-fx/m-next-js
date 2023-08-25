@@ -7,23 +7,29 @@ const ProtectRoute = ({children}) => {
     const router = useRouter();
     const [isLoginUser, setIsLoginUser] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [loginedUser, setLoginedUser] = useState({});
 
     useEffect(()=>{
-        setIsLoading(true);
+        console.log('=========> Now LOADING PAGE.....');
         (async()=>{
-            if (typeof window !== 'undefined') {
-                let user = await execAuthCheck();
-                let isLoginUser = isLogin(user);
-                console.log('route ', user, isLoginUser);
-                setIsLoginUser(isLoginUser);
+            if (typeof window !== 'undefined' && !router.asPath.includes('[')) {
+                loginCheck();
                 setIsLoading(false);
             }
         })();
+        return () => setIsLoading(true);
     },[router.asPath]);
+
+    const loginCheck = async () => {
+        let user = await execAuthCheck();
+        let isLoginUser = isLogin(user);
+        setLoginedUser(user);
+        setIsLoginUser(isLoginUser);
+    }
 
     const childrenWithProps = Children.map(children, (child) => {
         if(isValidElement(child)) {
-            return cloneElement(child, {isLoginUser});
+            return cloneElement(child, {isLoginUser, loginedUser, loginCheck:()=>{loginCheck()}});
         }
         return child;
     })

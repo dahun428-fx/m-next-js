@@ -4,6 +4,7 @@ import CustomStorage from "@/tempStorage/storage";
 import isLogin from "@/common/function/login/isLogin";
 import { execLogout } from "@/common/function/login/login";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const Home = ({isLoginUser}) => {
 
@@ -32,7 +33,7 @@ const Home = ({isLoginUser}) => {
             <div>
             Home
             </div>
-            <p>hi</p>
+            {/* <p>hi</p>
             {
                 isLoginUser && userInfo ?
                 <div>
@@ -45,6 +46,13 @@ const Home = ({isLoginUser}) => {
                 :
                 <LoginForm />
             }
+            <div>
+                <p>
+                    <Link href={`/vona2/mech`}>
+                        move to category Page
+                    </Link>
+                </p>
+            </div> */}
         </>
     )
 }

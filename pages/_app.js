@@ -1,6 +1,8 @@
 import ProtectRoute from "@/Hoc/ProtectRoute";
+import Layout from "@/Layout/layout";
 import { AxiosInterceptor } from "@/lib/axiosInterceptor";
 import { Suspense } from "react";
+import '../styles/common.css';
 
 const MyApp = ({Component, pageProps}) => {
 
@@ -8,7 +10,9 @@ const MyApp = ({Component, pageProps}) => {
         <Suspense>
             <AxiosInterceptor>
                 <ProtectRoute >
-                    <Component {...pageProps} />
+                    <Layout>
+                        <Component {...pageProps} />
+                    </Layout>
                 </ProtectRoute>
             </AxiosInterceptor>
         </Suspense>
