@@ -1,3 +1,5 @@
+import MegaNavi from "./meganavi";
+
 const HeadSearch = () => {
     return (
         <>
@@ -10,6 +12,7 @@ const HeadSearch = () => {
                         <h3 className="lc-h3">전체 메뉴 보기</h3>
                         <div className="l-meganav__category" data-cts="meganav-balloon">
                             <ul>
+                                <MegaNavi />
                             {/* <!--#include virtual="/vona2/megaNavi.html" --> */}
                             </ul>
                         </div>

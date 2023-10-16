@@ -16,3 +16,14 @@ export const categorySearchApi = async (categoryCode) => {
         }
     })
 }
+
+export const findByCategoryLevel = async (categoryLevel) => {
+    return await axiosApi({
+        method : 'get',
+        url :'/category/search',
+        params : {
+            categoryLevel,
+            ancesterType : 1,
+        }
+    })
+}

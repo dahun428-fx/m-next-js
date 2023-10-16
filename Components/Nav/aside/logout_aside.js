@@ -8,7 +8,7 @@ const LogoutAside = ({ballonShow, isBalloonShow, loginCheck, ballonClose}) => {
                     <a onClick={()=>ballonShow('login')}>로그인</a>
                 </li>
                 <li className="lc-order">
-                    <a>견적/주문</a>
+                    <a onClick={()=>ballonShow('wos')}>견적/주문</a>
                 </li>
                 <li className="lc-regist">
                     <a>회원가입</a>

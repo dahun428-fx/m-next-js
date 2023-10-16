@@ -34,4 +34,10 @@ const HeaderMain = (props) => {
     );
 }
 
+export const getServerSideProps = async () => {
+    return {
+        props : {}
+    }
+}
+
 export default HeaderMain;

@@ -1,0 +1,61 @@
+#login
+- api (post)
+    => url : auth/login 
+    => param : loginId, password
+    => response : createCookieUrlList, customerCode, permissionList, refreshTokenHash, sessionId, userCode
+
+#setSession
+- set cookie
+    GACCESSTOKENKEY : (login api) sessionId
+    GREFRESHTOKENHASH : (login api) refreshTokenHash
+
+#getUserInfo
+- api (get)
+    => url : userInfo
+    => param : {'field':'@default'}
+    => response : ...
+
+#storage ( localStorage )
+- getUserInfo data
+
+#authCheck ( execAuthCheck ) --> storage check (userinfo)
+- getUserInfo data // --> is null => logout
+
+
+------------------------------------
+ - 프론트
+ 1. 로그인 할때, id / pw 를 사용자로부터 받아서 미스미 rest api 의 auth/login에 접근한다.
+ 2. 유효한 id / pw 일 경우 session 및 refeshtokenhash 데이터를 받아온다.
+ 3. 해당 데이터를 localstorage 및 cookie 에 저장. 
+ 4. page router 변경 및 api 호출 시 axios ineterceptor 를 활용하여 cookie 에 저장되어 있는 token 값 ( GACCESSTOKENKEY ) 을
+    같이 전송한다. => getUserInfo api 를 호출하여 사용자 권한 확인.
+ 5. 불일치 일경우 로그아웃, 일치일 경우 다음 프로세스 
+ 
+
+#middleware 
+    - cookie get ( access token / refresh token )
+    - cookie set ( access token )
+#tokenReloader
+    - return access token key ( isvalid access token )
+#tokenChecker
+    - check valid access token
+    - decrypt access token key
+    - if not valid ==> return new token ( tokenrefresher )
+#tokenRefresher
+    - not valid access token --> refresh token --> api server --> get new valid access token
+    - https://stg0-kr.mauth.misumi-ec.com/api-auth-v1/auth/api/token/refresh?refreshTokenHash='+refresh_token_hash
+    - return access token
+
+------------------------------------
+ - 백엔드
+ 1. middleware.js ( next js 제공 ) 를 작성하여 token 유효성 검사 수행
+ 2. misumi refresh token hash 값이 있을 경우 다음과 같은 과정 수행
+    1 ) cookie 로부터 access token 과 refresh token 값을 가져온다. 
+        => 해당 토큰 값을 로그인 시에 제공 받는 토큰이며 로그인 시에 cookie 값에 저장하는 함수 수행
+    2 ) TokenReloader -> tokenChecker 함수에서 accessToken 과 RefreshToken 의 유효성 검사를 수행한다.
+        => tokenChecker에서 약속된 암호화 key 와 iVec  값을 활용하여 decrypt 수행
+        => duration 또한 체크하여 기간 만료 또한 체크한다.
+    3 ) 유효성 및 기간 만료가 된 access token 일 경우 TokenRefresher 함수 수행
+        => 가지고 있는 refreshToken 값을 검증 url ( 상단 기재 ) 에 전송하여 유효한 새로운 access token 값을 받아온다.
+        => 유효하지 않은 refreshToken 일 경우 RefreshTokenExpriedError 및 TokenSystemError 로 처리하여 middleware logout api 전송 후 프론트에서 logout 처리 ( try catch )
+    4 ) 새로운 accessToken 값을 middleware 에서 cookie 에 저장하여 프론트에 전송한다.  
